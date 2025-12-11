@@ -11,15 +11,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      - name: Install system dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y ffmpeg
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.10"
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install requests
           pip install TTS
+          pip install moviepy
 
-      - name: Run podcast generator
+      - name: Run podcast generator (audio)
         run: python3 src/podcast_generator.py
+
+      - name: Run video generator
+        run: python3 src/video_generator.py
