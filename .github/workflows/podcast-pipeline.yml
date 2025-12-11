@@ -11,6 +11,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
+      # 🔥 FIX: FREE 15–20 GB DISK SPACE
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker system prune -af || true
+          echo "Disk cleaned."
+
       - name: Install system dependencies
         run: |
           sudo apt update
@@ -21,11 +31,12 @@ jobs:
         with:
           python-version: "3.10"
 
+      # 🔥 FIX: disable pip cache (avoids space issues)
       - name: Install Python dependencies
         run: |
-          pip install requests
-          pip install TTS
-          pip install moviepy
+          pip install --no-cache-dir requests
+          pip install --no-cache-dir TTS
+          pip install --no-cache-dir moviepy
 
       - name: Run podcast generator (audio)
         run: python3 src/podcast_generator.py
