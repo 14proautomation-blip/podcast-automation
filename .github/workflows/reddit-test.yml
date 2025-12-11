@@ -1,0 +1,21 @@
+      - name: Run Reddit fetcher
+        run: |
+          python - <<EOF
+          import requests
+
+          def fetch_reddit_post(subreddit="AskReddit"):
+              url = f"https://www.reddit.com/r/{subreddit}/top.json?t=day&limit=1"
+              headers = {"User-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"}
+
+              response = requests.get(url, headers=headers)
+              print("HTTP status:", response.status_code)
+              data = response.json()
+
+              if "data" in data and "children" in data["data"] and len(data["data"]["children"]) > 0:
+                  post = data["data"]["children"][0]["data"]
+                  return {"title": post["title"], "selftext": post.get("selftext", "")}
+              else:
+                  return {"title": "No post found", "selftext": ""}
+
+          print(fetch_reddit_post())
+          EOF
