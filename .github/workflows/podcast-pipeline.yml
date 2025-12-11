@@ -11,7 +11,6 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v3
 
-      # 🔥 FIX: FREE 15–20 GB DISK SPACE
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -29,14 +28,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.9"
 
-      # 🔥 FIX: disable pip cache (avoids space issues)
+      # ✅ FIX: Install numpy before TTS to avoid broken import
+      - name: Install numpy first
+        run: |
+          pip install --no-cache-dir --upgrade pip
+          pip install --no-cache-dir numpy
+
+      # ✅ Install remaining Python dependencies
       - name: Install Python dependencies
         run: |
           pip install --no-cache-dir requests
-          pip install --no-cache-dir TTS
           pip install --no-cache-dir moviepy
+          pip install --no-cache-dir TTS
 
       - name: Run podcast generator (audio)
         run: python3 src/podcast_generator.py
